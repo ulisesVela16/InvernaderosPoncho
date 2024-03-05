@@ -43,7 +43,7 @@ if (empty($_SESSION["id"])) {
                             <a class="nav-link active" aria-current="page" href="#">Usuarios</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/registrarUsuario.php">Registrar Usuario</a>
+                            <a class="nav-link active" aria-current="page" href="registrarUsuario.php">Registrar Usuario</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="controller/controlador_cerrar_sesion.php">Cerrar sesión</a>

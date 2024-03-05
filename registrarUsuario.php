@@ -1,8 +1,39 @@
 <?php
-
 session_start();
-if (empty($_SESSION["id"])) {
-    header("location: login.php");
+
+// Verifica si la sesión está activa y si el usuario tiene rol de administrador
+//if (empty($_SESSION["id"]) || $_SESSION["rol"] !== 'admin') {
+  //  header("location: login.php");
+    //exit();
+//}
+
+// Aquí deberías incluir tu archivo de conexión a la base de datos
+include_once "./model/dbconection.php";
+
+// Verifica si se ha enviado el formulario de registro
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Obtén los datos del formulario
+    $username = $_POST["username"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $password = $_POST["password"];
+    $role = $_POST["role"];
+
+    // Hash de la contraseña (deberías utilizar funciones más seguras en un entorno de producción)
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    // Prepara la consulta SQL para insertar un nuevo usuario
+    $sql = $conexion->prepare("INSERT INTO Usuarios (usuario, correo_electronico, telefono, contraseña, rol) VALUES (?, ?, ?, ?, ?)");
+
+    // Vincula los parámetros y ejecuta la consulta
+    $sql->bind_param("sssss", $username, $email, $phone, $hashedPassword, $role);
+    $sql->execute();
+
+    // Cierra la conexión y redirige después de agregar el nuevo usuario
+    $sql->close();
+    $conexion->close();
+    header("location: usuarios.php"); // Reemplaza 'lista_usuarios.php' con la página donde muestras la lista de usuarios
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -50,7 +81,15 @@ if (empty($_SESSION["id"])) {
 
     <div class="container mt-5">
         <h2>Registro de Nuevo Usuario</h2>
-        <form>
+        <form method="POST" action="tu_archivo_de_procesamiento.php">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="apellidos" class="form-label">Apellidos</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+            </div>
             <div class="mb-3">
                 <label for="username" class="form-label">Nombre de Usuario</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -60,9 +99,9 @@ if (empty($_SESSION["id"])) {
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
-              <label for="phone" class="form-label">Telefono</label>
-              <input type="phone" class="form-control" id="phone" name="phone" required>
-          </div>
+                <label for="phone" class="form-label">Telefono</label>
+                <input type="phone" class="form-control" id="phone" name="phone" required>
+            </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" class="form-control" id="password" name="password" required>
